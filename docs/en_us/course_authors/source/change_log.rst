@@ -10,6 +10,8 @@ Change Log
 
    * - Date
      - Change
+   * - 04/1/14
+     - Updated the :ref:`Releasing Your Course Index` section to include :ref:`Launch`.
    * - 3/19/14
      - Updated the sections on :ref:`Beta_Testing`, :ref:`Discussions`, :ref:`Grades`, and :ref:`Student Data` with changes to the new Instructor Dashboard.
    * - 03/17/14
@@ -49,7 +51,7 @@ Change Log
    * - 02/24/14
      - Created new chapter, :ref:`Getting Started with edX`.
    * -
-     - Updated :ref:`Add a Course Video` section
+     - Updated :ref:`Add a Course Video` section.
    * - 02/21/14
      - Added the :ref:`Beta_Testing` chapter. 
    * - 02/19/14
