@@ -12,6 +12,9 @@ class CourseKeyField(models.CharField):
 
     def to_python(self, value):
         assert isinstance(value, basestring) or isinstance(value, SlashSeparatedCourseKey)
+        if not value:
+            # handle empty string for models being created w/o fields populated
+            return None
         if isinstance(value, basestring):
             return SlashSeparatedCourseKey.from_string(value)
         else:

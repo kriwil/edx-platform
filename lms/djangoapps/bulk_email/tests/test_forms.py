@@ -11,12 +11,14 @@ from courseware.tests.tests import TEST_DATA_MONGO_MODULESTORE
 from courseware.tests.modulestore_config import TEST_DATA_MIXED_MODULESTORE
 
 from xmodule.modulestore.django import modulestore
-from xmodule.modulestore import XML_MODULESTORE_TYPE, Location
+from xmodule.modulestore import XML_MODULESTORE_TYPE
 
 from mock import patch
 
 from bulk_email.models import CourseAuthorization
 from bulk_email.forms import CourseAuthorizationAdminForm
+from xmodule.modulestore.locations import SlashSeparatedCourseKey
+from xmodule.modulestore.keys import CourseKey
 
 
 @override_settings(MODULESTORE=TEST_DATA_MONGO_MODULESTORE)
@@ -38,7 +40,7 @@ class CourseAuthorizationFormTest(ModuleStoreTestCase):
         # Initially course shouldn't be authorized
         self.assertFalse(CourseAuthorization.instructor_email_enabled(self.course.id))
         # Test authorizing the course, which should totally work
-        form_data = {'course_id': self.course.id, 'email_enabled': True}
+        form_data = {'course_id': self.course.id.to_deprecated_string(), 'email_enabled': True}
         form = CourseAuthorizationAdminForm(data=form_data)
         # Validation should work
         self.assertTrue(form.is_valid())
@@ -51,7 +53,7 @@ class CourseAuthorizationFormTest(ModuleStoreTestCase):
         # Initially course shouldn't be authorized
         self.assertFalse(CourseAuthorization.instructor_email_enabled(self.course.id))
         # Test authorizing the course, which should totally work
-        form_data = {'course_id': self.course.id, 'email_enabled': True}
+        form_data = {'course_id': self.course.id.to_deprecated_string(), 'email_enabled': True}
         form = CourseAuthorizationAdminForm(data=form_data)
         # Validation should work
         self.assertTrue(form.is_valid())
@@ -60,7 +62,7 @@ class CourseAuthorizationFormTest(ModuleStoreTestCase):
         self.assertTrue(CourseAuthorization.instructor_email_enabled(self.course.id))
 
         # Now make a new course authorization with the same course id that tries to turn email off
-        form_data = {'course_id': self.course.id, 'email_enabled': False}
+        form_data = {'course_id': self.course.id.to_deprecated_string(), 'email_enabled': False}
         form = CourseAuthorizationAdminForm(data=form_data)
         # Validation should not work because course_id field is unique
         self.assertFalse(form.is_valid())
@@ -77,9 +79,9 @@ class CourseAuthorizationFormTest(ModuleStoreTestCase):
     @patch.dict(settings.FEATURES, {'ENABLE_INSTRUCTOR_EMAIL': True, 'REQUIRE_COURSE_EMAIL_AUTH': True})
     def test_form_typo(self):
         # Munge course id
-        bad_id = self.course.id + '_typo'
+        bad_id = SlashSeparatedCourseKey(u'Broken{}'.format(self.course.id.org), None, self.course.id.run + '_typo')
 
-        form_data = {'course_id': bad_id, 'email_enabled': True}
+        form_data = {'course_id': bad_id.to_deprecated_string(), 'email_enabled': True}
         form = CourseAuthorizationAdminForm(data=form_data)
         # Validation shouldn't work
         self.assertFalse(form.is_valid())
@@ -95,9 +97,9 @@ class CourseAuthorizationFormTest(ModuleStoreTestCase):
     @patch.dict(settings.FEATURES, {'ENABLE_INSTRUCTOR_EMAIL': True, 'REQUIRE_COURSE_EMAIL_AUTH': True})
     def test_course_name_only(self):
         # Munge course id - common
-        bad_id = Location.parse_course_id(self.course.run)
+        bad_id = SlashSeparatedCourseKey(u'Broken{}'.format(self.course.id.org), None, self.course.id.run)
 
-        form_data = {'course_id': bad_id, 'email_enabled': True}
+        form_data = {'course_id': bad_id.to_deprecated_string(), 'email_enabled': True}
         form = CourseAuthorizationAdminForm(data=form_data)
         # Validation shouldn't work
         self.assertFalse(form.is_valid())
@@ -116,7 +118,7 @@ class CourseAuthorizationXMLFormTest(ModuleStoreTestCase):
 
     @patch.dict(settings.FEATURES, {'ENABLE_INSTRUCTOR_EMAIL': True, 'REQUIRE_COURSE_EMAIL_AUTH': True})
     def test_xml_course_authorization(self):
-        course_id = 'edX/toy/2012_Fall'
+        course_id = CourseKey.from_string('edX/toy/2012_Fall')
         # Assert this is an XML course
         self.assertEqual(modulestore().get_modulestore_type(course_id), XML_MODULESTORE_TYPE)
 

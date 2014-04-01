@@ -127,7 +127,7 @@ class Optout(models.Model):
     # We need to first create the 'user' column with some sort of default in order to run the data migration,
     # and given the unique index, 'null' is the best default value.
     user = models.ForeignKey(User, db_index=True, null=True)
-    course_id = models.CharField(max_length=255, db_index=True)
+    course_id = CourseKeyField(max_length=255, db_index=True)
 
     class Meta:  # pylint: disable=C0111
         unique_together = ('user', 'course_id')
@@ -220,7 +220,7 @@ class CourseAuthorization(models.Model):
     Enable the course email feature on a course-by-course basis.
     """
     # The course that these features are attached to.
-    course_id = models.CharField(max_length=255, db_index=True, unique=True)
+    course_id = CourseKeyField(max_length=255, db_index=True, unique=True)
 
     # Whether or not to enable instructor email
     email_enabled = models.BooleanField(default=False)
