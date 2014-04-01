@@ -23,7 +23,7 @@ def get_problem_grade_distribution(course_id):
 
     # Aggregate query on studentmodule table for grade data for all problems in course
     db_query = models.StudentModule.objects.filter(
-        course_id__exact=course_id.to_deprecated_string(),
+        course_id__exact=course_id,
         grade__isnull=False,
         module_type__exact="problem",
     ).values('module_state_key', 'grade', 'max_grade').annotate(count_grade=Count('grade'))
@@ -62,7 +62,7 @@ def get_sequential_open_distrib(course_id):
 
     # Aggregate query on studentmodule table for "opening a subsection" data
     db_query = models.StudentModule.objects.filter(
-        course_id__exact=course_id.to_deprecated_string(),
+        course_id__exact=course_id,
         module_type__exact="sequential",
     ).values('module_state_key').annotate(count_sequential=Count('module_state_key'))
 
@@ -91,7 +91,7 @@ def get_problem_set_grade_distrib(course_id, problem_set):
 
     # Aggregate query on studentmodule table for grade data for set of problems in course
     db_query = models.StudentModule.objects.filter(
-        course_id__exact=course_id.to_deprecated_string(),
+        course_id__exact=course_id,
         grade__isnull=False,
         module_type__exact="problem",
         module_state_key__in=problem_set,
@@ -301,7 +301,7 @@ def get_d3_section_grade_distrib(course_id, section):
             for child in unit.get_children():
                 if (child.location.category == 'problem'):
                     c_problem += 1
-                    problem_set.append(child.location.url())
+                    problem_set.append(child.location)
                     problem_info[child.location.url()] = {
                         'id': child.location.url(),
                         'x_value': "P{0}.{1}.{2}".format(c_subsection, c_unit, c_problem),

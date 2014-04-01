@@ -250,4 +250,4 @@ class OfflineComputedGradeLog(models.Model):
     nstudents = models.IntegerField(default=0)
 
     def __unicode__(self):
-        return "[OCGLog] %s: %s" % (self.course_id, self.created)
+        return "[OCGLog] %s: %s" % (self.course_id.to_deprecated_string(), self.created)
