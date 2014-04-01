@@ -172,12 +172,12 @@ class TestEmailErrors(ModuleStoreTestCase):
         """
         Tests exception when the course in the email doesn't exist
         """
-        course_id = "I/DONT/EXIST"
+        course_id = CourseKey.from_string("I/DONT/EXIST")
         email = CourseEmail(course_id=course_id)
         email.save()
         entry = InstructorTask.create(course_id, "task_type", "task_key", "task_input", self.instructor)
         task_input = {"email_id": email.id}  # pylint: disable=E1101
-        with self.assertRaisesRegexp(ValueError, "Course not found"):
+        with self.assertRaisesRegexp(ValueError, r"(?i)course not found"):
             perform_delegate_email_batches(entry.id, course_id, task_input, "action_name")  # pylint: disable=E1101
 
     def test_nonexistent_to_option(self):
@@ -191,22 +191,10 @@ class TestEmailErrors(ModuleStoreTestCase):
         with self.assertRaisesRegexp(Exception, 'Unexpected bulk email TO_OPTION found: IDONTEXIST'):
             perform_delegate_email_batches(entry.id, self.course.id, task_input, "action_name")  # pylint: disable=E1101
 
-    def test_wrong_course_id_in_task(self):
-        """
-        Tests exception when the course_id in task is not the same as one explicitly passed in.
-        """
-        email = CourseEmail(course_id=self.course.id, to_option=SEND_TO_ALL)
-        email.save()
-        entry = InstructorTask.create(task_id="bogus_task_id", task_type="task_type", task_key="task_key", task_input="task_input", requester=self.instructor)
-        task_input = {"email_id": email.id}  # pylint: disable=E1101
-        with self.assertRaisesRegexp(ValueError, 'does not match task value'):
-            perform_delegate_email_batches(entry.id, self.course.id, task_input, "action_name")  # pylint: disable=E1101
-
     def test_wrong_course_id_in_email(self):
         """
         Tests exception when the course_id in CourseEmail is not the same as one explicitly passed in.
         """
-        email = CourseEmail(course_id="bogus/course/id", to_option=SEND_TO_ALL)
         email = CourseEmail(course_id=CourseKey.from_string("bogus/course/id"), to_option=SEND_TO_ALL)
         email.save()
         entry = InstructorTask.create(self.course.id, "task_type", "task_key", "task_input", self.instructor)

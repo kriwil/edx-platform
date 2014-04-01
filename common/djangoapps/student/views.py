@@ -615,7 +615,7 @@ def change_enrollment(request):
             "common.student.enrollment",
             tags=[
                 u"org:{}".format(course_id.org),
-                u"course:{}".format(course_id),
+                u"course:{!s}".format(course_id),
             ]
         )
 
@@ -643,7 +643,7 @@ def change_enrollment(request):
         dog_stats_api.increment(
             "common.student.unenrollment",
             tags=[u"org:{}".format(course_id.org),
-                  u"course:{}".format(course_id)]
+                  u"course:{!s}".format(course_id)]
         )
         return HttpResponse()
     else:
