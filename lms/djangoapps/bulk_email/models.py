@@ -247,4 +247,4 @@ class CourseAuthorization(models.Model):
         not_en = "Not "
         if self.email_enabled:
             not_en = ""
-        return u"Course '{}': Instructor Email {}Enabled".format(self.course_id, not_en)
+        return u"Course '{}': Instructor Email {}Enabled".format(self.course_id.to_deprecated_string(), not_en)
