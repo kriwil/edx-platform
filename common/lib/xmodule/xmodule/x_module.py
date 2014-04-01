@@ -540,8 +540,6 @@ class XModule(XModuleMixin, HTMLSnippet, XBlock):  # pylint: disable=abstract-me
 
         Makes no use of the context parameter
         """
-        dog_stats_api.increment(XMODULE_METRIC_NAME, tags=[u'action:student_view', u'course_id:{}'.format(self.course_id), u'block_type:{}'.format(self.descriptor.scope_ids.block_type)])
-
         return Fragment(self.get_html())
 
 
@@ -1220,6 +1218,25 @@ class ModuleSystem(ConfigurableFragmentWrapper, Runtime):  # pylint: disable=abs
 
     def __str__(self):
         return str(self.__dict__)
+
+    def render(self, block, view_name, context=None):
+        try:
+            super(ModuleSystem, self).render(block, view_name, context=None)
+            dog_stats_api.increment(XMODULE_METRIC_NAME, tags=[
+                u'action:student_view',
+                u'action_status:success',
+                u'course_id:{}'.format(self.course_id),
+                u'block_type:{}'.format(self.descriptor.scope_ids.block_type)
+            ])
+
+        except:
+            dog_stats_api.increment(XMODULE_METRIC_NAME, tags=[
+                u'action:student_view',
+                u'action_status:failure',
+                u'course_id:{}'.format(self.course_id),
+                u'block_type:{}'.format(block.scope_ids.block_type)
+            ])
+
 
     @property
     def ajax_url(self):

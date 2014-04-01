@@ -635,7 +635,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, user):
         log.exception("error executing xblock handler")
         raise
 
-    dog_stats_api.increment(XMODULE_METRIC_NAME, tags=[u'action:handle_ajax', u'course_id:{}'.format(self.course_id), u'block_type:{}'.format(self.descriptor.scope_ids.block_type)])
+    dog_stats_api.increment(XMODULE_METRIC_NAME, tags=[u'action:handle_ajax', u'course_id:{}'.format(course_id), u'block_type:{}'.format(descriptor.scope_ids.block_type)])
 
     return webob_to_django_response(resp)
 
