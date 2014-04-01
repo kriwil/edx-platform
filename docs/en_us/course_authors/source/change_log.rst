@@ -13,7 +13,7 @@ Change Log
    * - 3/31/14 
      - Expanded the :ref:`Grades` chapter to include the new :ref:`Review_Answers` section.
    * - 03/27/14
-     - Updated the :ref:`Add Pages` section to reflect feature changes.
+     - Updated the :ref:`Adding Pages to a Course` section to reflect feature changes.
    * - 3/27/14
      - Updated the section on :ref:`Beta_Testing` to include the new "batch add" feature.
    * - 3/19/14
@@ -86,7 +86,7 @@ Change Log
    * - 
      - Added more detailed instructions to :ref:`Zooming image`
    * - 01/21/2014
-     - Added information about accessibility in the topic :ref:`Add Textbooks`.
+     - Added information about accessibility in the topic :ref:`Adding Textbooks`.
    * - 01/14/2014
      - Added info about scoring (:ref:`Access Scores`) and due dates in :ref:`Open Response Assessment Problems`.
    * - 01/13/2014
