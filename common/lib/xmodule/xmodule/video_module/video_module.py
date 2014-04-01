@@ -150,7 +150,7 @@ class VideoModule(VideoFields, VideoStudentViewHandlers, XModule):
             'speed': json.dumps(self.speed),
             'general_speed': self.global_speed,
             'saved_video_position': self.saved_video_position.total_seconds(),
-            'stgart': self.start_time.total_seconds(),
+            'start': self.start_time.total_seconds(),
             'sub': self.sub,
             'track': track_url,
             'youtube_streams': create_youtube_string(self),
