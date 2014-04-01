@@ -27,9 +27,12 @@ from xmodule.modulestore import Location
 from xmodule.modulestore.exceptions import ItemNotFoundError, InsufficientSpecificationError, InvalidLocationError
 from xmodule.modulestore.locator import BlockUsageLocator
 from xmodule.exceptions import UndefinedContext
+from dogapi import dog_stats_api
 
 
 log = logging.getLogger(__name__)
+
+XMODULE_METRIC_NAME = 'edxapp.xmodule'
 
 
 def dummy_track(_event_type, _event):
@@ -537,6 +540,8 @@ class XModule(XModuleMixin, HTMLSnippet, XBlock):  # pylint: disable=abstract-me
 
         Makes no use of the context parameter
         """
+        dog_stats_api.increment(XMODULE_METRIC_NAME, tags=[u'action:student_view', u'course_id:{}'.format(self.course_id), u'block_type:{}'.format(self.descriptor.scope_ids.block_type)])
+
         return Fragment(self.get_html())
 
 

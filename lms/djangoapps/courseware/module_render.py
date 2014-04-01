@@ -39,7 +39,8 @@ from xmodule.modulestore.exceptions import ItemNotFoundError
 from xmodule.util.duedate import get_extended_due_date
 from xmodule_modifiers import replace_course_urls, replace_jump_to_id_urls, replace_static_urls, add_staff_debug_info, wrap_xblock
 from xmodule.lti_module import LTIModule
-from xmodule.x_module import XModuleDescriptor
+from xmodule.x_module import XModuleDescriptor, XMODULE_METRIC_NAME
+from dogapi import dog_stats_api
 
 from util.json_request import JsonResponse
 from util.sandboxing import can_execute_unsafe_code
@@ -633,6 +634,8 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, user):
     except Exception:
         log.exception("error executing xblock handler")
         raise
+
+    dog_stats_api.increment(XMODULE_METRIC_NAME, tags=[u'action:handle_ajax', u'course_id:{}'.format(self.course_id), u'block_type:{}'.format(self.descriptor.scope_ids.block_type)])
 
     return webob_to_django_response(resp)
 
