@@ -460,6 +460,14 @@ def index(request, course_id, chapter=None, section=None,
     return result
 
 
+@login_required
+@ensure_csrf_cookie
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
+def lab_file(request, course_id, chapter, section, filename):
+    from django.http import HttpResponseRedirect
+    static_url = "/static/labsterunity/{}".format(filename)
+    return HttpResponseRedirect(static_url)
+
 @ensure_csrf_cookie
 def jump_to_id(request, course_id, module_id):
     """
