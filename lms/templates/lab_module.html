@@ -1,7 +1,7 @@
 % if errors:
   <div>${errors}</div>
 % else:
-
+<div>${module.location}</div>
 <div id="unityPlayer"><embed src="http://localhost:9999/labster.unity3d" type="application/vnd.unity" width="957" height="650" firstframecallback="UnityObject2.instances[0].firstFrameCallback();" enabledebugging="0" backgroundcolor="000000" logoimage="logo.png" progressbarimage="progress_bar.png" progressframeimage="progress_bar_frame.png" disablecontextmenu="true" style="display: block; width: 957px; height: 650px;"></div>
 <script src="http://localhost:9999/UnityObject2.js"></script>
 <script type="text/javascript">
