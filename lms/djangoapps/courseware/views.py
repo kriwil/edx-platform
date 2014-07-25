@@ -834,11 +834,16 @@ def _progress_all(request, course_key):
 @login_required
 def student_detail(request, course_id, student_id):
     """
-        Create page for student detail
+    Create page for student detail
     """
     student = User.objects.get(id=int(student_id))
-    course = get_course(course_id=course_id)
-    grading_context = course.grading_context
+
+    try:
+        course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
+    except InvalidKeyError:
+        raise Http404
+
+    course = get_course(course_id=course_key)
 
     field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
             course.id, student, course, depth=2)
@@ -848,14 +853,14 @@ def student_detail(request, course_id, student_id):
     section = get_current_child(chapter)
     chapter_descriptor = course.get_child_by(lambda m: m.url_name == chapter.url_name)
     section_descriptor = chapter_descriptor.get_child_by(lambda m: m.url_name == section.url_name)
-    section_descriptor = modulestore().get_instance(course.id, section_descriptor.location, depth=None)
+    section_descriptor = modulestore().get_item(section_descriptor.location, depth=None)
 
     section_field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
             course.id, student, section_descriptor, depth=2)
 
     try:
         student_module = StudentModule.objects.filter(
-                course_id=course_id,
+                course_id=course_key,
                 student_id=student.id,
                 module_type='problem',
             )
@@ -874,7 +879,10 @@ def student_detail(request, course_id, student_id):
     for each in section_field_data_cache.descriptors:
         if each.plugin_name == 'problem' and each.data:
             field_name = "{tag}-{org}-{course}-{category}-{name}_2_1"
-            field_name = field_name.format(**each.location.dict())
+            location = each.location
+            field_name = field_name.format(
+                tag=location.tag, org=location.org, course=location.course,
+                category=location.category, name=location.name)
             each.attempt_key = field_name
 
             problemset['problems'].append(each)
